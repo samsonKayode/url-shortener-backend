@@ -1,8 +1,8 @@
 package com.url.shortner.backend.repository;
 
 import com.url.shortner.backend.entity.Url;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.Date;
 
 @DataJpaTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UrlRepositoryTest {
 
     @Autowired
@@ -23,7 +24,7 @@ class UrlRepositoryTest {
     @Value("${base_url}")
     private String baseURL;
 
-    @BeforeEach
+    @BeforeAll
     void setUp() {
         longUrl = "https://google.com";
         hashURL ="c5cd9fc1";
@@ -35,7 +36,6 @@ class UrlRepositoryTest {
 
         underTest.save(URL);
     }
-
 
     //Test checks if short url already exist..
     @Test
@@ -60,16 +60,23 @@ class UrlRepositoryTest {
     @Test
     void findByLongUrl() {
         Url url = underTest.findByLongUrl(longUrl);
-
         String urlResult = url.getLongUrl();
         //then
+        assertThat(urlResult).isEqualTo(longUrl);
     }
 
     @Test
     void existsByLongUrl() {
+        boolean exists =  underTest.existsByLongUrl(longUrl);
+        //then
+        assertThat(exists).isTrue();
     }
 
     @Test
-    void findByHashUrl() {
+    void findByHashedUrl() {
+        Url url = underTest.findByHashUrl(hashURL);
+        String urlResult = url.getHashUrl();
+        //then
+        assertThat(urlResult).isEqualTo(hashURL);
     }
 }

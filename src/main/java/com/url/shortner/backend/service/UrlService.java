@@ -30,13 +30,13 @@ public class UrlService {
 
     //convert long url to short..
 
-    public String convertUrl(UrlDto url){
-        String hashUrl=null;
+    public String convertUrl(UrlDto url) {
+        String hashUrl = null;
         String longUrl = url.getLongUrl();
 
         //Allowing only http and https custom schemes
         UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
-        if(urlValidator.isValid(longUrl)) {
+        if (urlValidator.isValid(longUrl)) {
 
             //confirm if url already exist..
             if (repository.existsByLongUrl(longUrl)) {
@@ -51,16 +51,13 @@ public class UrlService {
                 urlEntity.setDateCreated(new Date());
 
                 hashUrl = Hashing.murmur3_32().hashString(url.getLongUrl(), StandardCharsets.UTF_8).toString();
-
                 urlEntity.setHashUrl(hashUrl);
 
                 Url urlResult = repository.save(urlEntity);
-
-                logger.info("Converted Result {}", baseUrl + hashUrl);
-                return baseUrl+hashUrl;
+                logger.info("Short url result {}", baseUrl + hashUrl);
+                return baseUrl + hashUrl;
             }
-        }
-        else{
+        } else {
             throw new InvalidUrlException();
         }
 
@@ -68,27 +65,28 @@ public class UrlService {
 
     //Retrieve url data..
 
-    public String decodeUrl(String hashUrl){
+    public String decodeUrl(String hashUrl) {
 
         //confirm if the hash provided exist...
-        if(repository.existsByHashUrl(hashUrl)){
+        if (repository.existsByHashUrl(hashUrl)) {
             Url url = repository.findByHashUrl(hashUrl);
 
             return url.getLongUrl();
-        }else{
+        } else {
 
             logger.info("No data found for {}", hashUrl);
             throw new NoDataFoundException();
         }
 
     }
+
     //Statisticss..
-    public Url getShortUrlStatistics(String shortUrl){
-        if(repository.existsByHashUrl(shortUrl)){
+    public Url getShortUrlStatistics(String shortUrl) {
+        if (repository.existsByHashUrl(shortUrl)) {
             Url url = repository.findByHashUrl(shortUrl);
 
             return url;
-        }else{
+        } else {
 
             logger.info("No data found for {}", shortUrl);
             throw new NoDataFoundException();
@@ -96,13 +94,14 @@ public class UrlService {
     }
 
     //list of all the urls..
-    public List<Url> getAllUrlList(){
+    public List<Url> getAllUrlList() {
 
         List<Url> listUrl = repository.findAll();
-        if(listUrl.size() >= 1){
+        if (listUrl.size() >= 1) {
             return listUrl;
-        }else{
+        } else {
             throw new RuntimeException("Url list is empty");
         }
     }
+
 }

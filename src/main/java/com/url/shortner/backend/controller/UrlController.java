@@ -2,7 +2,7 @@ package com.url.shortner.backend.controller;
 
 import com.url.shortner.backend.dto.UrlDto;
 import com.url.shortner.backend.entity.Url;
-import com.url.shortner.backend.service.UrlService;
+import com.url.shortner.backend.service.IUrlService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,7 @@ import java.util.List;
 public class UrlController {
 
     @Autowired
-    UrlService service;
+    IUrlService service;
 
     //encode api..
     @ApiOperation(value = "Convert new url", notes = "Converts long url to short url")

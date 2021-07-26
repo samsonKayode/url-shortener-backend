@@ -5,7 +5,7 @@ import com.url.shortner.backend.dto.UrlDto;
 import com.url.shortner.backend.entity.Url;
 import com.url.shortner.backend.exceptions.InvalidUrlException;
 import com.url.shortner.backend.exceptions.NoDataFoundException;
-import com.url.shortner.backend.repository.UrlRepository;
+import com.url.shortner.backend.repository.IUrlRepository;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,18 +18,23 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class UrlService {
+public class UrlService implements IUrlService {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    UrlRepository repository;
+    IUrlRepository repository;
 
     @Value("${base_url}")
     private String baseUrl;
 
+    public UrlService(IUrlRepository repository) {
+        this.repository = repository;
+    }
+
     //convert long url to short..
 
+    @Override
     public String convertUrl(UrlDto url) {
         String hashUrl = null;
         String longUrl = url.getLongUrl();
@@ -60,11 +65,11 @@ public class UrlService {
         } else {
             throw new InvalidUrlException();
         }
-
     }
 
     //Retrieve url data..
 
+    @Override
     public String decodeUrl(String hashUrl) {
 
         //confirm if the hash provided exist...
@@ -77,10 +82,10 @@ public class UrlService {
             logger.info("No data found for {}", hashUrl);
             throw new NoDataFoundException();
         }
-
     }
 
     //Statisticss..
+    @Override
     public Url getShortUrlStatistics(String shortUrl) {
         if (repository.existsByHashUrl(shortUrl)) {
             Url url = repository.findByHashUrl(shortUrl);
@@ -94,6 +99,7 @@ public class UrlService {
     }
 
     //list of all the urls..
+    @Override
     public List<Url> getAllUrlList() {
 
         List<Url> listUrl = repository.findAll();

@@ -1,9 +1,10 @@
 package com.url.shortner.backend.repository;
 
 import com.url.shortner.backend.entity.Url;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UrlRepository extends JpaRepository<Url, Integer>, IUrlRepository {
+import java.util.List;
+
+public interface IUrlRepository {
 
     public Boolean existsByHashUrl(String hashUrl);
 
@@ -13,5 +14,8 @@ public interface UrlRepository extends JpaRepository<Url, Integer>, IUrlReposito
 
     public Url findByHashUrl(String hashUrl);
 
+    public Url save(Url url);
+
+    public List<Url> findAll();
 
 }

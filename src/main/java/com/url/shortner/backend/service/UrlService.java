@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -79,6 +80,21 @@ public class UrlService implements IUrlService {
             return url.getLongUrl();
         } else {
 
+            logger.info("No data found for {}", hashUrl);
+            throw new NoDataFoundException();
+        }
+    }
+
+    @Override
+    public RedirectView redirectURL(String hashUrl) {
+
+        RedirectView redirectView = new RedirectView();
+        if (repository.existsByHashUrl(hashUrl)) {
+            Url url = repository.findByHashUrl(hashUrl);
+
+            redirectView.setUrl(url.getLongUrl());
+            return redirectView;
+        }else{
             logger.info("No data found for {}", hashUrl);
             throw new NoDataFoundException();
         }

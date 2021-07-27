@@ -24,8 +24,6 @@ class IUrlRepositoryTest {
     private String hashURL;
     private String longUrl;
 
-    @Value("${base_url}")
-    private String baseURL;
 
     @BeforeEach
     void setUp() {

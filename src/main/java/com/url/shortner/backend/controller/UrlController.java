@@ -5,6 +5,7 @@ import com.url.shortner.backend.entity.Url;
 import com.url.shortner.backend.service.IUrlService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -51,14 +52,10 @@ public class UrlController {
 
     @GetMapping("/{shortUrl}")
     @ApiOperation(value = "Redirect short url", notes = "Redirects the short url to the original URL")
+    @Cacheable(value = "url", key = "#shortUrl", sync = true)
     public RedirectView redirectUrl(@PathVariable final String shortUrl) {
 
-        RedirectView redirectView = new RedirectView();
-        String URL = service.decodeUrl(shortUrl);
-
-        redirectView.setUrl(URL);
-
-        return redirectView;
+        return service.redirectURL(shortUrl);
     }
 
 

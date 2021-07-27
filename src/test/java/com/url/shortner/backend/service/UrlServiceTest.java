@@ -1,20 +1,21 @@
 package com.url.shortner.backend.service;
 
-import com.url.shortner.backend.repository.UrlRepository;
+import com.url.shortner.backend.dto.UrlDto;
+import com.url.shortner.backend.repository.IUrlRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class UrlServiceTest {
 
     @Mock
-    private UrlRepository repository;
-    UrlService underTest;
+    private IUrlRepository repository;
+    private UrlService underTest;
 
     @BeforeEach
     void setUp() {
@@ -23,7 +24,15 @@ class UrlServiceTest {
 
     @Test
     void convertUrl() {
+
+        String hashedFacebookURL="1dd1ac64";
         //when
+        UrlDto urlDto = new UrlDto();
+        urlDto.setLongUrl("http://facebook.com");
+        String returnedURL = underTest.convertUrl(urlDto);
+
+        //then.
+        assertThat(returnedURL).contains(hashedFacebookURL);
     }
 
     @Test

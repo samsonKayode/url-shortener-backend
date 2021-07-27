@@ -10,7 +10,6 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
-@EnableSwagger2
 public class SwaggerConfiguration {
     @Bean
     public Docket apiDocket() {
@@ -23,7 +22,7 @@ public class SwaggerConfiguration {
 
     private ApiInfo metadata(){
         return new ApiInfoBuilder()
-                .title("Url shortener API")
+                .title("Url Shortener API")
                 .description("API reference for developers")
                 .version("1.0")
                 .build();

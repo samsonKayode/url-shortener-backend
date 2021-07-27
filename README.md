@@ -2,4 +2,4 @@
 
 Swagger:
 
-http://localhost:7000/swagger-ui
+http://localhost:7000/swagger-ui/

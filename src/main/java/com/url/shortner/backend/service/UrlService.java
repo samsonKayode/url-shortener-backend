@@ -3,6 +3,7 @@ package com.url.shortner.backend.service;
 import com.google.common.hash.Hashing;
 import com.url.shortner.backend.dto.UrlDto;
 import com.url.shortner.backend.entity.Url;
+import com.url.shortner.backend.exceptions.InternalServerException;
 import com.url.shortner.backend.exceptions.InvalidUrlException;
 import com.url.shortner.backend.exceptions.NoDataFoundException;
 import com.url.shortner.backend.repository.IUrlRepository;
@@ -37,35 +38,41 @@ public class UrlService implements IUrlService {
 
     @Override
     public String convertUrl(UrlDto url) {
-        String hashUrl = null;
+        String hashUrl;
         String longUrl = url.getLongUrl();
 
-        //Allowing only http and https custom schemes
-        UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
-        if (urlValidator.isValid(longUrl)) {
+        try {
+            //Allowing only http and https custom schemes
+            UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
+            if (urlValidator.isValid(longUrl)) {
 
-            //confirm if url already exist..
-            if (repository.existsByLongUrl(longUrl)) {
-                Url URL = repository.findByLongUrl(url.getLongUrl());
-                hashUrl = baseUrl + URL.getHashUrl();
+                //confirm if url already exist..
+                if (repository.existsByLongUrl(longUrl)) {
+                    Url URL = repository.findByLongUrl(url.getLongUrl());
+                    hashUrl = baseUrl + URL.getHashUrl();
 
-                return hashUrl;
+                    return hashUrl;
+                } else {
+
+                    Url urlEntity = new Url();
+                    urlEntity.setLongUrl(longUrl);
+                    urlEntity.setDateCreated(new Date());
+
+                    hashUrl = Hashing.murmur3_32().hashString(url.getLongUrl(), StandardCharsets.UTF_8).toString();
+                    urlEntity.setHashUrl(hashUrl);
+
+                    repository.save(urlEntity);
+                    logger.info("Short url result {}", baseUrl + hashUrl);
+                    return baseUrl + hashUrl;
+                }
             } else {
-
-                Url urlEntity = new Url();
-                urlEntity.setLongUrl(longUrl);
-                urlEntity.setDateCreated(new Date());
-
-                hashUrl = Hashing.murmur3_32().hashString(url.getLongUrl(), StandardCharsets.UTF_8).toString();
-                urlEntity.setHashUrl(hashUrl);
-
-                Url urlResult = repository.save(urlEntity);
-                logger.info("Short url result {}", baseUrl + hashUrl);
-                return baseUrl + hashUrl;
+                throw new InvalidUrlException();
             }
-        } else {
-            throw new InvalidUrlException();
+        } catch (Exception exception) {
+            logger.error(exception.getLocalizedMessage());
+            throw new InternalServerException();
         }
+
     }
 
     //Retrieve url data..
@@ -73,44 +80,59 @@ public class UrlService implements IUrlService {
     @Override
     public String decodeUrl(String hashUrl) {
 
-        //confirm if the hash provided exist...
-        if (repository.existsByHashUrl(hashUrl)) {
-            Url url = repository.findByHashUrl(hashUrl);
+        try {
+            //confirm if the hash provided exist...
+            if (repository.existsByHashUrl(hashUrl)) {
+                Url url = repository.findByHashUrl(hashUrl);
 
-            return url.getLongUrl();
-        } else {
+                return url.getLongUrl();
+            } else {
 
-            logger.info("No data found for {}", hashUrl);
-            throw new NoDataFoundException();
+                logger.info("No data found for {}", hashUrl);
+                throw new NoDataFoundException();
+            }
+        } catch (Exception exception) {
+            logger.error(exception.getLocalizedMessage());
+            throw new InternalServerException();
         }
     }
 
     @Override
     public RedirectView redirectURL(String hashUrl) {
 
-        RedirectView redirectView = new RedirectView();
-        if (repository.existsByHashUrl(hashUrl)) {
-            Url url = repository.findByHashUrl(hashUrl);
+        try {
+            RedirectView redirectView = new RedirectView();
+            if (repository.existsByHashUrl(hashUrl)) {
+                Url url = repository.findByHashUrl(hashUrl);
 
-            redirectView.setUrl(url.getLongUrl());
-            return redirectView;
-        }else{
-            logger.info("No data found for {}", hashUrl);
-            throw new NoDataFoundException();
+                redirectView.setUrl(url.getLongUrl());
+                return redirectView;
+            } else {
+                logger.info("No data found for {}", hashUrl);
+                throw new NoDataFoundException();
+            }
+        } catch (Exception exception) {
+            logger.error(exception.getLocalizedMessage());
+            throw new InternalServerException();
         }
     }
 
     //Statisticss..
     @Override
     public Url getShortUrlStatistics(String shortUrl) {
-        if (repository.existsByHashUrl(shortUrl)) {
-            Url url = repository.findByHashUrl(shortUrl);
 
-            return url;
-        } else {
+        try {
+            if (repository.existsByHashUrl(shortUrl)) {
 
-            logger.info("No data found for {}", shortUrl);
-            throw new NoDataFoundException();
+                return repository.findByHashUrl(shortUrl);
+            } else {
+
+                logger.info("No data found for {}", shortUrl);
+                throw new NoDataFoundException();
+            }
+        } catch (Exception exception) {
+            logger.error(exception.getLocalizedMessage());
+            throw new InternalServerException();
         }
     }
 
@@ -118,11 +140,16 @@ public class UrlService implements IUrlService {
     @Override
     public List<Url> getAllUrlList() {
 
-        List<Url> listUrl = repository.findAll();
-        if (listUrl.size() >= 1) {
-            return listUrl;
-        } else {
-            throw new RuntimeException("Url list is empty");
+        try{
+            List<Url> listUrl = repository.findAll();
+            if (listUrl.size() >= 1) {
+                return listUrl;
+            } else {
+                throw new RuntimeException("Url list is empty");
+            }
+        }catch (Exception exception) {
+            logger.error(exception.getLocalizedMessage());
+            throw new InternalServerException();
         }
     }
 

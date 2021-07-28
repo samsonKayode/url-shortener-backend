@@ -98,6 +98,11 @@ public class UrlService implements IUrlService {
     }
 
     @Override
+    public Boolean verifyShortUrl(String shortUrl) {
+        return repository.existsByHashUrl(shortUrl);
+    }
+
+    @Override
     public RedirectView redirectURL(String hashUrl) {
 
         try {

@@ -48,8 +48,13 @@ public class UrlController {
         return service.getAllUrlList();
     }
 
-    //Redirect short url to long..
+    @GetMapping("/verify/{short_url}")
+    @ApiOperation(value = "Verify shortURL", notes = "Verifies if a short url exist")
+    public boolean verifyShortUrl(@PathVariable final String short_url){
+        return service.verifyShortUrl(short_url);
+    }
 
+    //Redirect short url to long..
     @GetMapping("/{shortUrl}")
     @ApiOperation(value = "Redirect short url", notes = "Redirects the short url to the original URL")
     @Cacheable(value = "url", key = "#shortUrl", sync = true)

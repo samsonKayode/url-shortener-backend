@@ -16,6 +16,8 @@ public interface IUrlService {
 
     public String decodeUrl(String hashUrl);
 
+    public Boolean verifyShortUrl(String shortUrl);
+
     public RedirectView redirectURL(String hashUrl);
 
 

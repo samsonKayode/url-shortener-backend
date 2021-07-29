@@ -4,8 +4,11 @@ import com.url.shortner.backend.dto.UrlDto;
 import com.url.shortner.backend.entity.Url;
 import com.url.shortner.backend.service.IUrlService;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -17,6 +20,8 @@ public class UrlController {
 
     @Autowired
     IUrlService service;
+
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     //encode api..
     @ApiOperation(value = "Convert new url", notes = "Converts long url to short url")
@@ -61,6 +66,14 @@ public class UrlController {
     public RedirectView redirectUrl(@PathVariable final String shortUrl) {
 
         return service.redirectURL(shortUrl);
+    }
+
+    //Pagination URL..
+    @GetMapping("/list/{pageNo}")
+    public Page<Url> findPaginated(@PathVariable int pageNo, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir ){
+        int pageSize=6;
+        Page<Url> page = service.findPaginated(pageNo, pageSize, sortField, sortDir);
+        return page;
     }
 
 

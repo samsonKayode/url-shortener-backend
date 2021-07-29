@@ -12,6 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -122,7 +126,18 @@ public class UrlService implements IUrlService {
         }
     }
 
-    //Statisticss..
+    @Override
+    public Page<Url> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection) {
+
+        Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending()
+                : Sort.by(sortField).descending();
+
+        Pageable pageable = PageRequest.of(pageNo -1, pageSize, sort);
+        Page<Url> urlPage = repository.findAll(pageable);
+        return urlPage;
+    }
+
+    //Statistics..
     @Override
     public Url getShortUrlStatistics(String shortUrl) {
 

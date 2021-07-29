@@ -13,5 +13,4 @@ public interface UrlRepository extends JpaRepository<Url, Integer>, IUrlReposito
 
     public Url findByHashUrl(String hashUrl);
 
-
 }

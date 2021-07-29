@@ -137,9 +137,6 @@ public class UrlService implements IUrlService {
 
         pageable = PageRequest.of(pageNo -1, pageSize, sort);
 
-        logger.info("LONG URL ====>"+longUrl);
-        logger.info("LONG URL SIZE ====>"+longUrl.length());
-
         if(longUrl.length()>2){
             urlPage = repository.findByLongUrlContains(pageable, longUrl);
 

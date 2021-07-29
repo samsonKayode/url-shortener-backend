@@ -52,7 +52,7 @@ public class UrlService implements IUrlService {
 
                 //confirm if url already exist..
                 if (repository.existsByLongUrl(longUrl)) {
-                    Url URL = repository.findByLongUrl(url.getLongUrl());
+                    Url URL = repository.findHashUrlByLongUrl(url.getLongUrl());
                     hashUrl = baseUrl + URL.getHashUrl();
 
                     return hashUrl;

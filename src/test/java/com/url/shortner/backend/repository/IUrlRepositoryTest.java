@@ -56,7 +56,7 @@ class IUrlRepositoryTest {
 
     @Test
     void findByLongUrl() {
-        Url url = underTest.findByLongUrl(longUrl);
+        Url url = underTest.findHashUrlByLongUrl(longUrl);
         String urlResult = url.getLongUrl();
         //then
         assertThat(urlResult).isEqualTo(longUrl);

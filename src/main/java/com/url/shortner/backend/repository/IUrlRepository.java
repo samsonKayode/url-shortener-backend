@@ -10,7 +10,7 @@ public interface IUrlRepository {
 
     public Boolean existsByHashUrl(String hashUrl);
 
-    public Url findByLongUrl(String hashUrl);
+    public Url findHashUrlByLongUrl(String hashUrl);
 
     public Boolean existsByLongUrl(String longUrl);
 
@@ -21,5 +21,6 @@ public interface IUrlRepository {
     public List<Url> findAll();
 
     public Page<Url> findAll(Pageable pageable);
+
 
 }

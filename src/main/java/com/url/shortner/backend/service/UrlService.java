@@ -127,15 +127,34 @@ public class UrlService implements IUrlService {
     }
 
     @Override
-    public Page<Url> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection) {
+    public Page<Url> findPaginated(int pageNo, int pageSize, String sortField, String sortDirection, String longUrl) {
+
+        Pageable pageable=null;
+        Page<Url> urlPage=null;
 
         Sort sort = sortDirection.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortField).ascending()
                 : Sort.by(sortField).descending();
 
-        Pageable pageable = PageRequest.of(pageNo -1, pageSize, sort);
-        Page<Url> urlPage = repository.findAll(pageable);
+        pageable = PageRequest.of(pageNo -1, pageSize, sort);
+
+        logger.info("LONG URL ====>"+longUrl);
+        logger.info("LONG URL SIZE ====>"+longUrl.length());
+
+        if(longUrl.length()>2){
+            urlPage = repository.findByLongUrlContains(pageable, longUrl);
+
+        }else{
+            urlPage = repository.findAll(pageable);
+        }
+
         return urlPage;
     }
+
+    @Override
+    public Page<Url> findByLongUrlContains(Pageable pageable, String longUrl) {
+        return repository.findByLongUrlContains(pageable, longUrl);
+    }
+
 
     //Statistics..
     @Override
@@ -172,5 +191,4 @@ public class UrlService implements IUrlService {
             throw new InternalServerException();
         }
     }
-
 }

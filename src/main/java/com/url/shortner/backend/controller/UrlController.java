@@ -70,11 +70,13 @@ public class UrlController {
 
     //Pagination URL..
     @GetMapping("/list/{pageNo}")
-    public Page<Url> findPaginated(@PathVariable int pageNo, @RequestParam("sortField") String sortField, @RequestParam("sortDir") String sortDir ){
+    @ApiOperation(value = "Sortable and Paginated List", notes = "Returns sortable and paginated url list result")
+    public Page<Url> findPaginated(@PathVariable int pageNo, @RequestParam("sortField") String sortField,
+                                   @RequestParam("sortDir") String sortDir, @RequestParam("longUrl") String longUrl ){
         int pageSize=6;
-        Page<Url> page = service.findPaginated(pageNo, pageSize, sortField, sortDir);
+
+        Page<Url> page = service.findPaginated(pageNo, pageSize, sortField, sortDir, longUrl);
         return page;
     }
-
 
 }

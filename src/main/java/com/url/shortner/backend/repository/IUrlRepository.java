@@ -22,5 +22,5 @@ public interface IUrlRepository {
 
     public Page<Url> findAll(Pageable pageable);
 
-
+    public Page<Url> findByLongUrlContains (Pageable pageable, String longUrl);
 }
